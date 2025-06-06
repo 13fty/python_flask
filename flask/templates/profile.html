@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">个人信息</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="mb-3">{{ student.name }}</h5>
+                            <p class="mb-1"><strong>学号：</strong>{{ student.student_id }}</p>
+                            <p class="mb-1"><strong>性别：</strong>{{ student.gender }}</p>
+                            <p class="mb-1"><strong>专业：</strong>{{ student.major_name }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-12">
+                            <h5 class="mb-3">宿舍信息</h5>
+                            {% if student.dorm_id %}
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <p class="mb-1"><strong>宿舍楼：</strong>{{ student.building }}</p>
+                                    <p class="mb-1"><strong>房间号：</strong>{{ student.room_number }}</p>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-warning mb-3">
+                                暂未分配宿舍
+                            </div>
+                            <form method="POST" action="{{ url_for('assign_dorm', student_id=student.student_id) }}">
+                                <button type="submit" class="btn btn-primary">自动分配宿舍</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border: none;
+        border-radius: 15px;
+    }
+    
+    .card-header {
+        border-radius: 15px 15px 0 0 !important;
+    }
+    
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+</style>
+{% endblock %} 

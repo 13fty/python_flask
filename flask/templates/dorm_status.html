@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">
+                    <i class="bi bi-grid-3x3 me-2"></i>宿舍状态
+                </h2>
+                <a href="{{ url_for('index') }}" class="btn btn-outline-primary">
+                    <i class="bi bi-house me-2"></i>返回首页
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 筛选表单 -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label for="building" class="form-label">宿舍楼</label>
+                    <select class="form-select" id="building" name="building">
+                        <option value="">全部</option>
+                        {% for b in buildings %}
+                        <option value="{{ b }}" {% if b == current_building %}selected{% endif %}>{{ b }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="capacity" class="form-label">房间类型</label>
+                    <select class="form-select" id="capacity" name="capacity">
+                        <option value="">全部</option>
+                        {% for c in capacities %}
+                        <option value="{{ c }}" {% if c|string == current_capacity %}selected{% endif %}>{{ c }}人间</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="gender" class="form-label">性别</label>
+                    <select class="form-select" id="gender" name="gender">
+                        <option value="">全部</option>
+                        <option value="男" {% if current_gender == '男' %}selected{% endif %}>男生宿舍</option>
+                        <option value="女" {% if current_gender == '女' %}selected{% endif %}>女生宿舍</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="occupancy" class="form-label">入住情况</label>
+                    <select class="form-select" id="occupancy" name="occupancy">
+                        <option value="">全部</option>
+                        <option value="empty" {% if current_occupancy == 'empty' %}selected{% endif %}>空宿舍</option>
+                        <option value="partial" {% if current_occupancy == 'partial' %}selected{% endif %}>部分入住</option>
+                        <option value="full" {% if current_occupancy == 'full' %}selected{% endif %}>已住满</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-search me-2"></i>筛选
+                    </button>
+                    <a href="{{ url_for('dorm_status') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle me-2"></i>重置
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if dorm_details %}
+    <div class="row g-4">
+        {% for detail in dorm_details %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card {% if detail.dorm.gender == '女' %}bg-pink{% else %}bg-blue{% endif %}">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-building me-2"></i>{{ detail.dorm.building }} - {{ detail.dorm.room_number }}
+                        ({{ detail.dorm.gender }}生宿舍)
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted">入住率</span>
+                            <span class="badge bg-primary">{{ detail.dorm.occupied_beds }}/{{ detail.dorm.capacity }}</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar" role="progressbar" 
+                                 style="width: {{ detail.occupancy_rate|round }}%">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>床位</th>
+                                    <th>学生</th>
+                                    <th>专业</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for bed in detail.beds %}
+                                <tr>
+                                    <td>{{ bed.bed_number }}号</td>
+                                    <td>
+                                        {% if bed.student_name %}
+                                        {{ bed.student_name }}
+                                        {% else %}
+                                        <span class="text-muted">空</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if bed.major_name %}
+                                        {{ bed.major_name }}
+                                        {% else %}
+                                        <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle me-2"></i>暂无符合条件的宿舍信息
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    .card-header {
+        border-radius: 15px 15px 0 0 !important;
+    }
+    .progress {
+        border-radius: 4px;
+        background-color: #e9ecef;
+    }
+    .progress-bar {
+        background-color: #0d6efd;
+    }
+    .table {
+        margin-bottom: 0;
+    }
+    .table th {
+        font-weight: 600;
+        color: #495057;
+    }
+    .badge {
+        font-weight: 500;
+        padding: 0.5em 0.75em;
+    }
+    .bg-pink {
+        background-color: #ffe6e6;
+    }
+    .bg-blue {
+        background-color: #e6f3ff;
+    }
+</style>
+{% endblock %} 

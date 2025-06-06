@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">
+                    <i class="bi bi-person-vcard me-2"></i>学生信息
+                </h2>
+                <a href="{{ url_for('index') }}" class="btn btn-outline-primary">
+                    <i class="bi bi-house me-2"></i>返回首页
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-person me-2"></i>基本信息
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="text-muted d-block">姓名</label>
+                        <h5>{{ student.name }}</h5>
+                    </div>
+                    <div class="mb-3">
+                        <label class="text-muted d-block">学号</label>
+                        <h5>{{ student.student_id }}</h5>
+                    </div>
+                    <div class="mb-3">
+                        <label class="text-muted d-block">性别</label>
+                        <h5>{{ student.gender }}</h5>
+                    </div>
+                    <div class="mb-3">
+                        <label class="text-muted d-block">专业</label>
+                        <h5>{{ student.major_name }}</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-house me-2"></i>宿舍信息
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if student.dorm_id %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted d-block">宿舍楼</label>
+                            <h5>{{ student.building }}</h5>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted d-block">房间号</label>
+                            <h5>{{ student.room_number }}</h5>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted d-block">床位号</label>
+                            <h5>{{ student.bed_number }}号</h5>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning mb-0">
+                        <i class="bi bi-exclamation-triangle me-2"></i>暂未分配宿舍
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if roommates %}
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-people me-2"></i>室友信息
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>姓名</th>
+                                    <th>学号</th>
+                                    <th>专业</th>
+                                    <th>床位</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for roommate in roommates %}
+                                <tr>
+                                    <td>{{ roommate.name }}</td>
+                                    <td>{{ roommate.student_id }}</td>
+                                    <td>{{ roommate.major_name }}</td>
+                                    <td>{{ roommate.bed_number }}号</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .card-header {
+        border-radius: 15px 15px 0 0 !important;
+    }
+    .table {
+        margin-bottom: 0;
+    }
+    .table th {
+        font-weight: 600;
+        color: #495057;
+    }
+    .alert {
+        border-radius: 8px;
+        border: none;
+    }
+</style>
+{% endblock %} 
